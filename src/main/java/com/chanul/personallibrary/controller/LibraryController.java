@@ -25,4 +25,20 @@ public class LibraryController {
     public List<LibraryItem> getAllItems() {
         return libraryItemService.getAllItems();
     }
+    @GetMapping("/{id}")
+    public LibraryItem getItemById(@PathVariable Long id) {
+        return libraryItemService.getItemById(id);
+    }
+    @PutMapping("/{id}")
+    public LibraryItem updateItem(
+            @PathVariable Long id,
+            @RequestBody LibraryItem item) {
+
+        return libraryItemService.updateItem(id, item);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteItem(@PathVariable Long id) {
+        libraryItemService.deleteItem(id);
+    }
 }

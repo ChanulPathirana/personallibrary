@@ -22,4 +22,28 @@ public class LibraryItemService {
     public List<LibraryItem> getAllItems() {
         return libraryItemRepository.findAll();
     }
+    public LibraryItem getItemById(Long id) {
+        return libraryItemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Library item not found")); 
+    }
+    public LibraryItem updateItem(Long id, LibraryItem updatedItem) {
+
+        LibraryItem existingItem = getItemById(id);
+
+        existingItem.setTitle(updatedItem.getTitle());
+        existingItem.setAuthor(updatedItem.getAuthor());
+        existingItem.setType(updatedItem.getType());
+        existingItem.setStatus(updatedItem.getStatus());
+
+        return libraryItemRepository.save(existingItem);
+    }
+
+    public void deleteItem(Long id) {
+
+        LibraryItem item = getItemById(id);
+
+        libraryItemRepository.delete(item);
+    }
+
+    
 }
