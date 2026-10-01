@@ -3,7 +3,7 @@ package com.chanul.personallibrary.service;
 import com.chanul.personallibrary.model.LibraryItem;
 import com.chanul.personallibrary.repository.LibraryItemRepository;
 import org.springframework.stereotype.Service;
-
+import com.chanul.personallibrary.exception.LibraryItemNotFoundException;
 import java.util.List;
 
 @Service
@@ -24,7 +24,7 @@ public class LibraryItemService {
     }
     public LibraryItem getItemById(Long id) {
         return libraryItemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Library item not found")); 
+                .orElseThrow(() -> new LibraryItemNotFoundException(id)); 
     }
     public LibraryItem updateItem(Long id, LibraryItem updatedItem) {
 
