@@ -1,6 +1,6 @@
 package com.chanul.personallibrary.controller;
 
-import com.chanul.personallibrary.dto.CreateLibraryItemRequest;
+import com.chanul.personallibrary.dto.*;
 import com.chanul.personallibrary.model.LibraryItem;
 import com.chanul.personallibrary.service.LibraryItemService;
 
@@ -39,7 +39,7 @@ public class LibraryController {
     @PutMapping("/{id}")
     public LibraryItem updateItem(
             @PathVariable Long id,
-            @Valid @RequestBody LibraryItem item) {
+            @Valid @RequestBody UpdateLibraryItemRequest item) {
 
         return libraryItemService.updateItem(id, item);
     }

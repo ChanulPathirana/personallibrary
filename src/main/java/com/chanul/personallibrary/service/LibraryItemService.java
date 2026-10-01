@@ -4,7 +4,7 @@ import com.chanul.personallibrary.model.LibraryItem;
 import com.chanul.personallibrary.repository.LibraryItemRepository;
 import org.springframework.stereotype.Service;
 import com.chanul.personallibrary.exception.LibraryItemNotFoundException;
-import com.chanul.personallibrary.dto.CreateLibraryItemRequest;
+import com.chanul.personallibrary.dto.*;
 import java.util.List;
 
 @Service
@@ -34,14 +34,14 @@ public class LibraryItemService {
         return libraryItemRepository.findById(id)
                 .orElseThrow(() -> new LibraryItemNotFoundException(id)); 
     }
-    public LibraryItem updateItem(Long id, LibraryItem updatedItem) {
+    public LibraryItem updateItem(Long id, UpdateLibraryItemRequest request) {
 
         LibraryItem existingItem = getItemById(id);
 
-        existingItem.setTitle(updatedItem.getTitle());
-        existingItem.setAuthor(updatedItem.getAuthor());
-        existingItem.setType(updatedItem.getType());
-        existingItem.setStatus(updatedItem.getStatus());
+        existingItem.setTitle(request.getTitle());
+        existingItem.setAuthor(request.getAuthor());
+        existingItem.setType(request.getType());
+        existingItem.setStatus(request.getStatus());
 
         return libraryItemRepository.save(existingItem);
     }
