@@ -1,40 +1,23 @@
-package com.chanul.personallibrary.model;
+package com.chanul.personallibrary.dto;
 
-import jakarta.persistence.*;
+import com.chanul.personallibrary.model.ItemType;
+import com.chanul.personallibrary.model.ReadingStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-@Entity
-public class LibraryItem {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class CreateLibraryItemRequest {
 
     @NotBlank(message = "Title is required")
     private String title;
 
     @NotBlank(message = "Author is required")
     private String author;
-    
+
     @NotNull(message = "Type is required")
-    @Enumerated(EnumType.STRING)
     private ItemType type;
-    @NotNull(message = "Type is required")
 
-    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Status is required")
     private ReadingStatus status;
-
-    public LibraryItem() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getTitle() {
         return title;

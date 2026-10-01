@@ -1,7 +1,10 @@
 package com.chanul.personallibrary.controller;
 
+import com.chanul.personallibrary.dto.CreateLibraryItemRequest;
 import com.chanul.personallibrary.model.LibraryItem;
 import com.chanul.personallibrary.service.LibraryItemService;
+
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,22 +20,26 @@ public class LibraryController {
     }
 
     @PostMapping
-    public LibraryItem createItem(@RequestBody LibraryItem item) {
-        return libraryItemService.createItem(item);
+    public LibraryItem createItem(
+            @Valid @RequestBody CreateLibraryItemRequest request) {
+
+        return libraryItemService.createItem(request);
     }
 
     @GetMapping
     public List<LibraryItem> getAllItems() {
         return libraryItemService.getAllItems();
     }
+
     @GetMapping("/{id}")
     public LibraryItem getItemById(@PathVariable Long id) {
         return libraryItemService.getItemById(id);
     }
+
     @PutMapping("/{id}")
     public LibraryItem updateItem(
             @PathVariable Long id,
-            @RequestBody LibraryItem item) {
+            @Valid @RequestBody LibraryItem item) {
 
         return libraryItemService.updateItem(id, item);
     }
