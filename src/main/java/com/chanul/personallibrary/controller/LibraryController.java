@@ -2,6 +2,7 @@ package com.chanul.personallibrary.controller;
 
 import com.chanul.personallibrary.dto.*;
 import com.chanul.personallibrary.model.LibraryItem;
+import com.chanul.personallibrary.model.ReadingStatus;
 import com.chanul.personallibrary.service.LibraryItemService;
 
 import jakarta.validation.Valid;
@@ -57,5 +58,12 @@ public class LibraryController {
     public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
         libraryItemService.deleteItem(id);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<LibraryItem>> getItemByStatus(@PathVariable ReadingStatus status){
+        List <LibraryItem> list = libraryItemService.getItemByStatus(status);
+        return ResponseEntity.ok(list);
+
+
     }
 }

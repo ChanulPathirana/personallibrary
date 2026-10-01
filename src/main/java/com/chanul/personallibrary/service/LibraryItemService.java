@@ -1,6 +1,8 @@
 package com.chanul.personallibrary.service;
 
 import com.chanul.personallibrary.model.LibraryItem;
+
+import com.chanul.personallibrary.model.ReadingStatus;
 import com.chanul.personallibrary.repository.LibraryItemRepository;
 import org.springframework.stereotype.Service;
 import com.chanul.personallibrary.exception.LibraryItemNotFoundException;
@@ -51,6 +53,13 @@ public class LibraryItemService {
         LibraryItem item = getItemById(id);
 
         libraryItemRepository.delete(item);
+    }
+
+    public List<LibraryItem> getItemByStatus(ReadingStatus status){
+
+        return libraryItemRepository.findByStatus(status);
+
+
     }
 
     
