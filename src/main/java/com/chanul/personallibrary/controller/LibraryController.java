@@ -1,7 +1,7 @@
 package com.chanul.personallibrary.controller;
 
 import com.chanul.personallibrary.dto.*;
-import com.chanul.personallibrary.model.LibraryItem;
+import com.chanul.personallibrary.model.*;
 import com.chanul.personallibrary.model.ReadingStatus;
 import com.chanul.personallibrary.service.LibraryItemService;
 
@@ -66,4 +66,20 @@ public class LibraryController {
 
 
     }
+    @GetMapping("/title/{title}")
+    public ResponseEntity<List<LibraryItem>> getItemByTitle(@PathVariable String title){
+        List <LibraryItem> list = libraryItemService.getItemByTitle(title);
+        return ResponseEntity.ok(list);
+
+
+    }
+    @GetMapping("/type/{type}")
+    public ResponseEntity<List<LibraryItem>> getItemByType(@PathVariable ItemType type){
+        List <LibraryItem> list = libraryItemService.getItemByType(type);
+        return ResponseEntity.ok(list);
+
+
+    }
+    
+
 }

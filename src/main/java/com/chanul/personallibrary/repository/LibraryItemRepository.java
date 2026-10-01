@@ -7,5 +7,9 @@ import java.util.List;
 public interface LibraryItemRepository extends JpaRepository<LibraryItem, Long> {
     List <LibraryItem> findByStatus(ReadingStatus status);
 
+    List<LibraryItem> findByTitleContainingIgnoreCase(String title);
+
+    List <LibraryItem> findByType(ItemType type);
+
     
 }

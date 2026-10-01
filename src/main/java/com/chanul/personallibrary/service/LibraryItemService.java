@@ -1,6 +1,6 @@
 package com.chanul.personallibrary.service;
 
-import com.chanul.personallibrary.model.LibraryItem;
+import com.chanul.personallibrary.model.*;
 
 import com.chanul.personallibrary.model.ReadingStatus;
 import com.chanul.personallibrary.repository.LibraryItemRepository;
@@ -61,6 +61,20 @@ public class LibraryItemService {
 
 
     }
+
+    public List<LibraryItem> getItemByTitle(String title){
+
+        return libraryItemRepository.findByTitleContainingIgnoreCase(title);
+
+
+    }
+    public List<LibraryItem> getItemByType(ItemType type){
+
+        return libraryItemRepository.findByType(type);
+
+
+    }
+
 
     
 }
