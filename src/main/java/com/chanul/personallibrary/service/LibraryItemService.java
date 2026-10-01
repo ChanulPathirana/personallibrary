@@ -1,13 +1,13 @@
 package com.chanul.personallibrary.service;
 
 import com.chanul.personallibrary.model.*;
-
-import com.chanul.personallibrary.model.ReadingStatus;
 import com.chanul.personallibrary.repository.LibraryItemRepository;
 import org.springframework.stereotype.Service;
 import com.chanul.personallibrary.exception.LibraryItemNotFoundException;
 import com.chanul.personallibrary.dto.*;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class LibraryItemService {
@@ -73,6 +73,9 @@ public class LibraryItemService {
         return libraryItemRepository.findByType(type);
 
 
+    }
+    public Page<LibraryItem> getAllItemsByPage(Pageable pageable) {
+        return libraryItemRepository.findAll(pageable);
     }
 
 

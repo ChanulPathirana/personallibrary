@@ -2,13 +2,15 @@ package com.chanul.personallibrary.controller;
 
 import com.chanul.personallibrary.dto.*;
 import com.chanul.personallibrary.model.*;
-import com.chanul.personallibrary.model.ReadingStatus;
 import com.chanul.personallibrary.service.LibraryItemService;
 
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -33,11 +35,11 @@ public class LibraryController {
 
     }
 
-    @GetMapping
-    public ResponseEntity<List<LibraryItem>> getAllItems() {
-        List <LibraryItem> items =  libraryItemService.getAllItems();
-        return ResponseEntity.ok(items);
-    }
+    // @GetMapping
+    // public ResponseEntity<List<LibraryItem>> getAllItems() {
+    //     List <LibraryItem> items =  libraryItemService.getAllItems();
+    //     return ResponseEntity.ok(items);
+    // }s
 
     @GetMapping("/{id}")
     public ResponseEntity<LibraryItem> getItemById(@PathVariable Long id) {
@@ -79,6 +81,12 @@ public class LibraryController {
         return ResponseEntity.ok(list);
 
 
+    }
+    @GetMapping
+    public ResponseEntity<Page<LibraryItem>> getAllItemsByPage(Pageable pageable) {
+        return ResponseEntity.ok(
+            libraryItemService.getAllItemsByPage(pageable)
+        );
     }
     
 
