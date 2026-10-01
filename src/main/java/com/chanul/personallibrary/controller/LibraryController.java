@@ -88,6 +88,15 @@ public class LibraryController {
             libraryItemService.getAllItemsByPage(pageable)
         );
     }
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadPdf(
+        @RequestParam("file") MultipartFile file) {
+
+        return ResponseEntity.ok(
+            "Received PDF: " + file.getOriginalFilename()
+    );
+}
+
     
 
 }
