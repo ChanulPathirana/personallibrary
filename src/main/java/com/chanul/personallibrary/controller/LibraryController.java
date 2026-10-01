@@ -6,6 +6,8 @@ import com.chanul.personallibrary.service.LibraryItemService;
 
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -20,32 +22,40 @@ public class LibraryController {
     }
 
     @PostMapping
-    public LibraryItem createItem(
+    public ResponseEntity<LibraryItem> createItem(
             @Valid @RequestBody CreateLibraryItemRequest request) {
 
-        return libraryItemService.createItem(request);
+        LibraryItem createditem=libraryItemService.createItem(request);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(createditem);
+
     }
 
     @GetMapping
-    public List<LibraryItem> getAllItems() {
-        return libraryItemService.getAllItems();
+    public ResponseEntity<List<LibraryItem>> getAllItems() {
+        List <LibraryItem> items =  libraryItemService.getAllItems();
+        return ResponseEntity.ok(items);
     }
 
     @GetMapping("/{id}")
-    public LibraryItem getItemById(@PathVariable Long id) {
-        return libraryItemService.getItemById(id);
+    public ResponseEntity<LibraryItem> getItemById(@PathVariable Long id) {
+        LibraryItem item = libraryItemService.getItemById(id);
+        return ResponseEntity.ok(item);
     }
 
     @PutMapping("/{id}")
-    public LibraryItem updateItem(
+    public ResponseEntity<LibraryItem> updateItem(
             @PathVariable Long id,
             @Valid @RequestBody UpdateLibraryItemRequest item) {
 
-        return libraryItemService.updateItem(id, item);
+        LibraryItem updateditem = libraryItemService.updateItem(id, item);
+        return ResponseEntity.ok(updateditem);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteItem(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
         libraryItemService.deleteItem(id);
+        return ResponseEntity.noContent().build();
     }
 }
