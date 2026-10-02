@@ -30,4 +30,7 @@ public class GoogleDriveConnectionService {
     public boolean isConnected() {
         return repository.existsById(1L);
     }
+    public void disconnect() {
+        repository.deleteById(1L);
+    }
 }

@@ -3,23 +3,29 @@ package com.chanul.personallibrary.controller;
 import com.chanul.personallibrary.model.ItemType;
 import com.chanul.personallibrary.model.LibraryItem;
 import com.chanul.personallibrary.model.ReadingStatus;
+import com.chanul.personallibrary.service.GoogleDriveService;
 import com.chanul.personallibrary.service.LibraryItemService;
 
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@SpringBootTest(properties = {
+        "google.client-id=test-client-id",
+        "google.client-secret=test-client-secret",
+        "google.redirect-uri=http://localhost:8080/api/google-drive/callback"
+})
 @AutoConfigureMockMvc
 class LibraryControllerTest {
 
@@ -29,25 +35,52 @@ class LibraryControllerTest {
     @MockitoBean
     private LibraryItemService libraryItemService;
 
+    @MockitoBean
+    private GoogleDriveService googleDriveService;
+
     @Test
-    void shouldGetAllLibraryItems() throws Exception {
+    void shouldUploadPdfAndCreateLibraryItem() throws Exception {
 
-        LibraryItem item = new LibraryItem();
+        MockMultipartFile file =
+                new MockMultipartFile(
+                        "file",
+                        "clean-code.pdf",
+                        "application/pdf",
+                        "fake-pdf-content".getBytes()
+                );
 
-        item.setId(1L);
-        item.setTitle("Clean Code");
-        item.setAuthor("Robert C. Martin");
-        item.setType(ItemType.BOOK);
-        item.setStatus(ReadingStatus.TO_READ);
+        when(
+                googleDriveService.uploadFile(any())
+        ).thenReturn("fake-drive-file-id");
 
-        when(libraryItemService.getAllItems())
-                .thenReturn(List.of(item));
+        LibraryItem savedItem = new LibraryItem();
 
-        mockMvc.perform(get("/api/library"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].title")
-                        .value("Clean Code"))
-                .andExpect(jsonPath("$[0].author")
-                        .value("Robert C. Martin"));
+        savedItem.setId(4L);
+        savedItem.setTitle("Clean Code");
+        savedItem.setAuthor("Robert C. Martin");
+        savedItem.setType(ItemType.PDF);
+        savedItem.setStatus(ReadingStatus.TO_READ);
+        savedItem.setGoogleDriveFileId("fake-drive-file-id");
+        savedItem.setGoogleDriveUrl(
+                "https://drive.google.com/file/d/fake-drive-file-id/view"
+        );
+
+        when(
+                libraryItemService.saveLibraryItem(any())
+        ).thenReturn(savedItem);
+
+        mockMvc.perform(
+                multipart("/api/library/upload")
+                        .file(file)
+                        .param("title", "Clean Code")
+                        .param("author", "Robert C. Martin")
+                        .param("type", "PDF")
+                        .param("status", "TO_READ")
+        )
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id").value(4))
+        .andExpect(jsonPath("$.title").value("Clean Code"))
+        .andExpect(jsonPath("$.googleDriveFileId")
+                .value("fake-drive-file-id"));
     }
 }
