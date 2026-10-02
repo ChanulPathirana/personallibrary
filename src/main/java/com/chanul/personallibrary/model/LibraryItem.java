@@ -24,6 +24,8 @@ public class LibraryItem {
 
     @Enumerated(EnumType.STRING)
     private ReadingStatus status;
+    private String googleDriveFileId;
+    private String googleDriveUrl;
 
     public LibraryItem() {
     }
@@ -66,5 +68,20 @@ public class LibraryItem {
 
     public void setStatus(ReadingStatus status) {
         this.status = status;
+    }
+    public String getGoogleDriveFileId() {
+    return googleDriveFileId;
+}
+
+    public void setGoogleDriveFileId(String googleDriveFileId) {
+        this.googleDriveFileId = googleDriveFileId;
+    }
+
+    public String getGoogleDriveUrl() {
+        return googleDriveUrl;
+    }
+
+    public void setGoogleDriveUrl(String googleDriveUrl) {
+        this.googleDriveUrl = googleDriveUrl;
     }
 }

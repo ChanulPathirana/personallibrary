@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
+import com.chanul.personallibrary.service.GoogleDriveService;
 
 import java.util.List;
 
@@ -19,9 +20,11 @@ import java.util.List;
 public class LibraryController {
 
     private final LibraryItemService libraryItemService;
+    private final GoogleDriveService googleDriveService;
 
-    public LibraryController(LibraryItemService libraryItemService) {
+    public LibraryController(LibraryItemService libraryItemService , GoogleDriveService googleDriveService) {
         this.libraryItemService = libraryItemService;
+        this.googleDriveService=googleDriveService;
     }
 
     @PostMapping
@@ -88,15 +91,78 @@ public class LibraryController {
             libraryItemService.getAllItemsByPage(pageable)
         );
     }
+//     @PostMapping("/upload")
+//     public ResponseEntity<String> uploadPdf(
+//         @RequestParam("file") MultipartFile file) {
+
+//         return ResponseEntity.ok(
+//             "Received PDF: " + file.getOriginalFilename()
+//     );
+// }
+    // @PostMapping("/upload")
+    // public ResponseEntity<String> uploadPdf(
+    //         @RequestParam("file") MultipartFile file) {
+
+    //     try {
+
+    //         String fileId =
+    //                 googleDriveService.uploadFile(file);
+
+    //         return ResponseEntity.ok(
+    //                 "Uploaded successfully. Drive file ID: "
+    //                         + fileId
+    //         );
+
+    //     } catch (Exception e) {
+
+    //         return ResponseEntity
+    //                 .internalServerError()
+    //                 .body(
+    //                     "Upload failed: " + e.getMessage()
+    //                 );
+    //     }
+    // }
+
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadPdf(
+public ResponseEntity<LibraryItem> uploadLibraryItem(
+        @RequestParam("title") String title,
+        @RequestParam("author") String author,
+        @RequestParam("type") ItemType type,
+        @RequestParam("status") ReadingStatus status,
         @RequestParam("file") MultipartFile file) {
 
-        return ResponseEntity.ok(
-            "Received PDF: " + file.getOriginalFilename()
-    );
-}
+    try {
 
+        String fileId = googleDriveService.uploadFile(file);
+
+        String driveUrl =
+                "https://drive.google.com/file/d/"
+                + fileId
+                + "/view";
+
+        LibraryItem item = new LibraryItem();
+
+        item.setTitle(title);
+        item.setAuthor(author);
+        item.setType(type);
+        item.setStatus(status);
+        item.setGoogleDriveFileId(fileId);
+        item.setGoogleDriveUrl(driveUrl);
+
+        LibraryItem savedItem =
+                libraryItemService.saveLibraryItem(item);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(savedItem);
+
+    } catch (Exception e) {
+
+        return ResponseEntity
+                .internalServerError()
+                .build();
+    }
+}
     
 
 }

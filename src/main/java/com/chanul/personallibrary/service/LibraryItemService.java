@@ -77,6 +77,9 @@ public class LibraryItemService {
     public Page<LibraryItem> getAllItemsByPage(Pageable pageable) {
         return libraryItemRepository.findAll(pageable);
     }
+    public LibraryItem saveLibraryItem(LibraryItem item) {
+        return libraryItemRepository.save(item);
+    }
 
 
     
