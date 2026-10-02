@@ -1,6 +1,7 @@
 package com.chanul.personallibrary.controller;
 
 import com.chanul.personallibrary.service.GoogleDriveConnectionService;
+import com.chanul.personallibrary.service.GoogleOAuthService;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -27,6 +28,8 @@ import java.util.Map;
 public class GoogleDriveController {
 
     private final GoogleDriveConnectionService connectionService;
+    private final GoogleOAuthService googleOAuthService;
+
 
     @Value("${google.client-id}")
     private String clientId;
@@ -38,9 +41,11 @@ public class GoogleDriveController {
     private String clientSecret;
 
     public GoogleDriveController(
-            GoogleDriveConnectionService connectionService) {
+            GoogleDriveConnectionService connectionService,
+         GoogleOAuthService googleOAuthService) {
 
         this.connectionService = connectionService;
+        this.googleOAuthService = googleOAuthService;
     }
 
     @GetMapping("/connect")
@@ -140,4 +145,25 @@ public class GoogleDriveController {
                 "Google Drive connected successfully"
         );
     }
+    @GetMapping("/status")
+    public ResponseEntity<Map<String, Boolean>> getStatus() {
+
+        boolean connected =
+                connectionService.isConnected();
+
+        return ResponseEntity.ok(
+                Map.of("connected", connected)
+        );
+    }
+    @GetMapping("/test-token")
+    public ResponseEntity<String> testToken() {
+
+        googleOAuthService.getAccessToken();
+
+        return ResponseEntity.ok(
+                "Access token received successfully"
+        );
+    }
+
+
 }

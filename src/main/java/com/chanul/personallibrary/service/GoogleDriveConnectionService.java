@@ -27,4 +27,7 @@ public class GoogleDriveConnectionService {
 
         repository.save(connection);
     }
+    public boolean isConnected() {
+        return repository.existsById(1L);
+    }
 }
