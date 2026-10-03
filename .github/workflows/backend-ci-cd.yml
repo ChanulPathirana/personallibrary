@@ -1,0 +1,85 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: personallibrary_test
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test_user -d personallibrary_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DB_URL: jdbc:postgresql://localhost:5432/personallibrary_test
+      DB_USERNAME: test_user
+      DB_PASSWORD: test_password
+      # Override the H2 datasource in src/test/resources/application.properties.
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/personallibrary_test
+      SPRING_DATASOURCE_USERNAME: test_user
+      SPRING_DATASOURCE_PASSWORD: test_password
+      GOOGLE_CLIENT_ID: test-client-id
+      GOOGLE_CLIENT_SECRET: test-client-secret
+      GOOGLE_REDIRECT_URI: http://localhost:8080/api/google-drive/callback
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Make Maven wrapper executable
+        run: chmod +x mvnw
+
+      - name: Run tests
+        run: ./mvnw clean test
+
+      - name: Build application
+        run: ./mvnw package -DskipTests
+
+      - name: Verify Spring Boot JAR
+        run: test -f target/personallibrary-0.0.1-SNAPSHOT.jar
+
+      - name: Build Docker image
+        run: docker build -t personallibrary-backend:${{ github.sha }} .
+
+  deploy:
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deployment for tested commit
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "::error::Missing GitHub Actions secret RENDER_DEPLOY_HOOK_URL."
+            exit 1
+          fi
+
+          if ! curl -fsS -X POST -o /dev/null "${RENDER_DEPLOY_HOOK_URL}&ref=${GITHUB_SHA}" 2>/dev/null; then
+            echo "::error::Render deploy hook request failed."
+            exit 1
+          fi
