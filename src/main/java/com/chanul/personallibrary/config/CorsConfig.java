@@ -15,7 +15,8 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
                         .allowedOrigins(
-                                "http://localhost:5173"
+                                "http://localhost:5173",
+                                "https://personal-library-frontend-chi.vercel.app/"
                         )
                         .allowedMethods(
                                 "GET",
